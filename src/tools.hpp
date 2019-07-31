@@ -11,7 +11,7 @@
 namespace Tools{
 
 //-------------------------------------------------------------------------------------
-std::vector<double> PrecisionCalculate(std::vector<cv::Rect>groundtruth_rect,
+inline std::vector<double> PrecisionCalculate(std::vector<cv::Rect>groundtruth_rect,
                                        std::vector<cv::Rect>result_rect) {
   /*！
     calculate distance precision rate
@@ -49,7 +49,7 @@ std::vector<double> PrecisionCalculate(std::vector<cv::Rect>groundtruth_rect,
 //-------------------------------------------------------------------------------------
 
 //-------------------------------------------------------------------------------------
-std::vector<cv::Rect> GetGroundtruth(std::string txt_file) {
+inline std::vector<cv::Rect> GetGroundtruth(std::string txt_file) {
   /*!
     param: 
       txt_file: groundtruth file path

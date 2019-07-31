@@ -3,10 +3,8 @@ project(kcf)
 aux_source_directory(./src/ SRC_LIST)
 add_executable(${PROJECT_NAME} ${SRC_LIST})
 
-set(OpenCV_DIR F:/resource/opencv-3.2.0/)
-
 IF (WIN32)
-  set(OpenCV_DIR D:/opencv310/build)
+  set(OpenCV_DIR D:/opencv320/build)
 ENDIF(WIN32)
 IF (UNIX)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11") #c++11
