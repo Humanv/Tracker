@@ -5,6 +5,7 @@
 #include <fstream>
 
 #include "tracker.hpp"
+#include "tools.hpp"
 
 using namespace cv;
 using namespace std;
@@ -12,7 +13,7 @@ using namespace std;
 int main(int argc, char **argv) {
   if (argc != 3) {
     std::cout << "Usage:" 
-              << argv[0] << " video_base_path[./David3] Verbose[0/1]" << std::endl;
+              << argv[0] << " video_base_path[./Human3] Verbose[0/1]" << std::endl;
     return 0;
   }
 

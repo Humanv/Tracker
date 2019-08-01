@@ -1,4 +1,5 @@
 #include "tracker.hpp"
+#include "tools.hpp"
 
 //------------------------------------------------------------------------------
 Tracker::Tracker(std::string kernel_type, std::string feature_type) {
@@ -73,7 +74,7 @@ void Tracker::Init(cv::Mat image, cv::Rect rect_init) {
 
   cos_window_ = CalculateHann(yf_.size());
 
-  cv::Mat patch = GetSubwindow(image, pos_, window_sz_);
+  cv::Mat patch = Tools::getSubwindow(image, pos_, window_sz_);
 
   Learn(patch, 1.);
 }
@@ -81,7 +82,7 @@ void Tracker::Init(cv::Mat image, cv::Rect rect_init) {
 
 //------------------------------------------------------------------------------
 cv::Rect Tracker::Update(cv::Mat image) {
-  cv::Mat patch = GetSubwindow(image, pos_, window_sz_);
+  cv::Mat patch = Tools::getSubwindow(image, pos_, window_sz_);
   std::vector<cv::Mat> z = GetFeatures(patch);
   std::vector<cv::Mat> zf_vector(z.size());
   for (unsigned int i = 0; i < z.size(); ++i)
@@ -111,7 +112,7 @@ cv::Rect Tracker::Update(cv::Mat image) {
   result_rect_.x += cell_size_ * maxLoc.x;
   result_rect_.y += cell_size_ * maxLoc.y;
 
-  patch = GetSubwindow(image, pos_, window_sz_);
+  patch = Tools::getSubwindow(image, pos_, window_sz_);
   Learn(patch, interp_factor_);
 
   return result_rect_;
@@ -225,30 +226,6 @@ cv::Mat Tracker::CalculateHann(cv::Size sz) {
   return temp2.t() * temp1;
 }
 //------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------------------------------------------
-cv::Mat Tracker::GetSubwindow(const cv::Mat &frame, cv::Point centerCoor, cv::Size sz) {
-  cv::Mat subWindow;
-  //get coordinate of lefttop and rightbottom
-  cv::Point lefttop(min(frame.cols - 2, max(-sz.width+1, centerCoor.x - cvFloor(float(sz.width) / 2.0) + 1)),
-		  	  	  	min(frame.rows - 2, max(-sz.height+1, centerCoor.y - cvFloor(float(sz.height) / 2.0) + 1)));
-  cv::Point rightbottom(lefttop.x + sz.width, lefttop.y + sz.height);
-
-  cv::Rect border(-min(lefttop.x, 0), -min(lefttop.y, 0),
-		  max(rightbottom.x - (frame.cols - 1), 0), max(rightbottom.y - (frame.rows - 1), 0));
-  cv::Point lefttopLimit(max(lefttop.x, 0), max(lefttop.y, 0));
-  cv::Point rightbottomLimit(min(rightbottom.x, frame.cols - 1), min(rightbottom.y, frame.rows - 1));
-    
-  cv::Rect roiRect(lefttopLimit, rightbottomLimit);
-  
-  frame(roiRect).copyTo(subWindow);
-
-  if (border != cv::Rect(0,0,0,0))
-    cv::copyMakeBorder(subWindow, subWindow, border.y, border.height, border.x, border.width, cv::BORDER_REPLICATE);
-  
-  return subWindow;
-}
-//--------------------------------------------------------------------------------------------------------------------
 
 //------------------------------------------------------------
 std::vector<cv::Mat> Tracker::GetFeatures(cv::Mat patch) {

@@ -31,8 +31,6 @@ protected:
 
   cv::Mat CalculateHann(cv::Size sz);
 
-  cv::Mat GetSubwindow(const cv::Mat &frame, cv::Point centraCoor, cv::Size sz);
-
   std::vector<cv::Mat> GetFeatures(cv::Mat patch);
 
   cv::Mat GaussianCorrelation(std::vector<cv::Mat> xf, std::vector<cv::Mat> yf);

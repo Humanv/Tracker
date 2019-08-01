@@ -91,5 +91,58 @@ inline cv::Point FloorPointScale(cv::Point p, double scale_factor) {
         return p; 
     return cv::Point(cvFloor(p.x * scale_factor), 
         cvFloor(p.y * scale_factor));
+}
+//-------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------
+inline cv::Rect cutWindow(const cv::Rect& subwindow, const cv::Rect& limit){
+    cv::Rect res;
+    //right border
+    if(subwindow.x + subwindow.width > limit.x + limit.width)
+        res.width = limit.x + limit.width - subwindow.x;
+    //bottom border
+    if(subwindow.y + subwindow.height > limit.y + limit.height)
+        res.height = limit.y + limit.height - subwindow.y;
+    //left border
+    if(subwindow.x < limit.x){
+        res.width = subwindow.width - (limit.x - subwindow.x);
+        res.x = limit.x;
+    }
+    //top border
+    if(subwindow.y < limit.y){
+        res.height = subwindow.height - (limit.y - subwindow.y);
+    }
+    if(res.width < 0) res.width = 0;
+    if(res.height < 0) res.height = 0;
+    return res;
+}
+//-------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------
+inline cv::Rect getBorder(const cv::Rect& subwindow, const cv::Rect& limitBox){
+    cv::Rect res;
+    //left
+    res.x = limitBox.x - subwindow.x;
+    //top
+    res.y = limitBox.y - subwindow.y;
+    //right
+    res.width = subwindow.width - (limitBox.x + limitBox.width);
+    //bottom
+    res.height = subwindow.height - (limitBox.y + limitBox.height);
+    return res;
+}
+//-------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------
+inline cv::Mat getSubwindow(const cv::Mat& frame, cv::Point centerCoor, cv::Size sz){
+    cv::Rect limit(0, 0, frame.cols, frame.rows);
+    cv::Rect subwindow(centerCoor.x-sz.width, centerCoor.y-sz.height, sz.width, sz.height);
+    cv::Rect cutedWindow = cutWindow(subwindow, limit);
+    cv::Rect border = getBorder(subwindow, cutedWindow);
+    cv::Mat res(frame, cutedWindow);
+    if(border != cv::Rect(0,0,0,0))
+        cv::copyMakeBorder(res, res, border.y, border.height, border.x, border.width, cv::BORDER_CONSTANT);
+    return res;
+}
 //-------------------------------------------------------------------------------------
 }
